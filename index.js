@@ -52,8 +52,13 @@ app.get('/calculator/:operation', function(req, res) {
             "calculated" : calculator(operation, num1, num2)
         }
     }; 
-
-    res.send(data);
+  
+  if (operation === "add" || operation === "subtract" || operation === "multiply" || operation === "divide"){
+   res.send(data);
+  }
+  else{
+   res.status(412).send("<h1>412 error: Precondition Failed</h1><br>The precondition given in one or more of the request-header fields evaluated to false when it was tested on the server. This response code allows the client to place preconditions on the current resource metainformation (header field data) and thus prevent the requested method from being applied to a resource other than the one intended.");
+  }
 });
 
 //calculator/:operation?num1=XX&num2=XX and respond with a JSON object that looks like the following. For example, /op/add?num1=31&num2=11:
