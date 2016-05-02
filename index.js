@@ -1,10 +1,24 @@
 var express = require('express');
 var app = express();
 
-app.get('/', function (req, res) {
-  res.send('<h1>Hello World!</h2>');
-});
+function sayHelloTo(name){
+    return "<h1>Hello " + name + "</h2>";
+}
 
+// app.get('/', function (req, res) {
+//   res.send('<h1>Hello World!</h1>');
+// });
+
+app.get('/greet', function(request, response){
+    var name = request.query.name;
+    var result = sayHelloTo(name);
+    response.send(result);
+})
+
+
+app.get('/hello/:tagId', function(req, res) {
+  res.send("<h1><i>Hello " + req.params.tagId + "</i></h2>");
+});
 
 
 
