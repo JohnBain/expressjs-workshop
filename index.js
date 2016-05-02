@@ -1,9 +1,10 @@
 var express = require('express');
 var app = express();
+var bodyParser = require('body-parser')
 var redditAPI = require('./redditstuff.js')
 
-app.get('/reddit', function(req, res) {
-  redditAPI(function(result){
+app.get('/posts', function(req, res) {
+  redditAPI.getAllPosts(function(result){
     var finalstring = `<div id="contents">
     <h1>List of contents</h1>
     <ul class="contents-list">`
@@ -21,9 +22,30 @@ app.get('/reddit', function(req, res) {
   })
 });
 
+app.use(bodyParser());
+
 app.get('/createContent', function(req, res){
+  console.log(req)
   res.sendFile('/home/ubuntu/workspace/form.html')
 })
+
+app.post('/createContent', function(req, res){
+  var postUrl = req.body.url;
+  var postTitle = req.body.title;
+  redditAPI. createPost({
+      title: postTitle,
+      url: postUrl,
+      userId: 1,
+      subredditId: 3
+    }, function(err, post) {
+      if (err) {
+        res.send("Error. Post not created.");
+      }
+      else {
+        res.send(post);
+      }
+    });
+});
 
 
 /* YOU DON'T HAVE TO CHANGE ANYTHING BELOW THIS LINE :) */

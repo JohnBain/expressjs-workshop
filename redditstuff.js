@@ -35,5 +35,47 @@ var getAllPosts = function(callback) {
   )
 }
 
+var createPost = function(post, callback) {
+  conn.query(
+    'INSERT INTO `posts` (`userId`, `title`, `url`, `subredditId`, `createdAt`) VALUES (?, ?, ?, ?, ?)', [post.userId, post.title, post.url, post.subredditId, null],
+    function(err, result) {
+      if (err) {
+        callback(err);
+      }
+      else {
+        /*
+        Post inserted successfully. Let's use the result.insertId to retrieve
+        the post and send it to the caller!
+        */
+        conn.query(
+          'SELECT `id`,`title`,`url`,`userId`, `createdAt`, `subredditId`, `updatedAt` FROM `posts` WHERE `id` = ?', [result.insertId],
+          function(err, result) {
+            if (err) {
+              callback(err);
+            }
+            else {
+              callback(null, result[0]);
+            }
+          }
+        );
+      }
+    }
+  );
+}
 
-module.exports =getAllPosts;
+
+createPost({
+      title: 'YET ANOTHER CAT POST!!!!!!!',
+      url: 'https://www.placekitten.com',
+      userId: 1,
+      subredditId: 3
+    }, function(err, post) {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        console.log(post);
+      }
+    });
+    
+module.exports = {getAllPosts, createPost};
