@@ -21,6 +21,10 @@ app.get('/reddit', function(req, res) {
   })
 });
 
+app.get('/createContent', function(req, res){
+  res.sendFile('/home/ubuntu/workspace/form.html')
+})
+
 
 /* YOU DON'T HAVE TO CHANGE ANYTHING BELOW THIS LINE :) */
 
