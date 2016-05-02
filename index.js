@@ -42,7 +42,7 @@ app.post('/createContent', function(req, res){
         res.send("Error. Post not created.");
       }
       else {
-        res.send(post);
+        res.redirect('/posts')
       }
     });
 });
