@@ -1,74 +1,25 @@
 var express = require('express');
 var app = express();
+var redditAPI = require('./redditstuff.js')
 
-function sayHelloTo(name){
-    return "<h1>Hello " + name + "</h2>";
-}
-
-function calculator(operation, first, second){
+app.get('/reddit', function(req, res) {
+  redditAPI(function(result){
+    var finalstring = `<div id="contents">
+    <h1>List of contents</h1>
+    <ul class="contents-list">`
   
-  if (operation === "add"){
-    return first + second;
-  }
-  if (operation === "subtract"){
-    return first - second;
-  }
-  if (operation === "multiply"){
-    return first * second;
-  }
-  if (operation === "divide"){
-    return first / second;
-  }
-  else {
-    return "Possible operations are add, subtract, multiply, divide"
-  }
-}
-
-// app.get('/', function (req, res) {
-//   res.send('<h1>Hello World!</h1>');
-// });
-
-app.get('/greet', function(request, response){
-    var name = request.query.name;
-    var result = sayHelloTo(name);
-    response.send(result);
-})
-
-//^ https://express-workshop-jbain1.c9users.io/greet?name=John
-
-
-app.get('/calculator/:operation', function(req, res) {
-    var operation = req.params.operation;
-    var num1 = parseInt(req.query.num1);
-    var num2 = parseInt(req.query.num2);
+    result.forEach(function (post){
+      finalstring += `<li class="content-item">
+      <h2 class='${post.title}'>
+        <a href='${post.url}'/>${post.title}</a>
+      </h2>
+      <p>Created by ${post.user}</p>`
+    })
     
-    
-    
-    var data = {
-        "calculator": {
-            "operation": operation,
-            "firstOperand": num1,
-            "secondOperand": num2,
-            "calculated" : calculator(operation, num1, num2)
-        }
-    }; 
-  
-  if (operation === "add" || operation === "subtract" || operation === "multiply" || operation === "divide"){
-   res.send(data);
-  }
-  else{
-   res.status(412).send("<h1>412 error: Precondition Failed</h1><br>The precondition given in one or more of the request-header fields evaluated to false when it was tested on the server. This response code allows the client to place preconditions on the current resource metainformation (header field data) and thus prevent the requested method from being applied to a resource other than the one intended.");
-  }
+    finalstring += "</li> </ul> </div>"
+    res.send(finalstring)
+  })
 });
-
-//calculator/:operation?num1=XX&num2=XX and respond with a JSON object that looks like the following. For example, /op/add?num1=31&num2=11:
-
-app.get('/hello/:tagId', function(req, res) {
-  res.send("<h1><i>Hello " + req.params.tagId + "</i></h2>");
-});
-
-//^ https://express-workshop-jbain1.c9users.io/hello/John
-
 
 
 /* YOU DON'T HAVE TO CHANGE ANYTHING BELOW THIS LINE :) */
@@ -81,3 +32,16 @@ var server = app.listen(process.env.PORT, process.env.IP, function () {
   console.log('Example app listening at http://%s:%s', host, port);
 });
 
+
+/*<div id="contents">
+  <h1>List of contents</h1>
+  <ul class="contents-list">
+    <li class="content-item">
+      <h2 class="content-item__title">
+        <a href="http://the.post.url.value/">The content title</a>
+      </h2>
+      <p>Created by CONTENT AUTHOR USERNAME</p>
+    </li>
+    ... one <li> per content that your Sequelize query found
+  </ul>
+</div>*/
